@@ -1,4 +1,8 @@
 import random
+import io
+
+
+output = io.StringIO()
 
 
 def crear_laberinto_resoluble(filas=11, columnas=15):
@@ -84,6 +88,14 @@ def agente_reactivo(laberinto):
 
 if __name__ == "__main__":
     lab = crear_laberinto_resoluble()
+
+    def guardar_laberinto(laberinto, archivo = None):
+        for fila in laberinto
+            linea  = " ".join(fila)
+            print(linea)
+            if archivo:
+                print(linea, file=archivo)
+
     print("Laberinto inicial:")
     imprimir_laberinto(lab)
 
