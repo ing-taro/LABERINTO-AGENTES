@@ -64,7 +64,7 @@ def menu_principal():
     return opcion
 
 
-# --------------------- Lógica de agentes (versión simplificada) ---------------------
+# --------------------- Lógica de agentes ---------------------
 def agente_reactivo(laberinto):
     entrada = encontrar_posicion(laberinto, 'E')
     salida = encontrar_posicion(laberinto, 'S')
@@ -73,7 +73,7 @@ def agente_reactivo(laberinto):
     max_iter = 1000
 
     while movimientos < max_iter and pos_actual != salida:
-        # Lógica de movimiento aleatorio (implementación básica)
+        # Lógica de movimiento aleatorio
         i, j = pos_actual
         direcciones = []
         if i > 0 and laberinto[i - 1][j] != '#': direcciones.append((-1, 0))
@@ -119,16 +119,13 @@ if __name__ == "__main__":
             print(f"\n{'Éxito' if exito else 'Fallo'} en {movs} movimientos")
 
         elif opcion == '2':
-            # Cargar desde archivo (implementación básica)
+            # Cargar desde archivo 
             archivo = input("Nombre del archivo (ej: maze1.txt): ")
             try:
                 with open(archivo, 'r') as f:
                     lab = [list(linea.strip()) for linea in f]
                 print("\nLaberinto cargado:")
                 mostrar_laberinto(lab)
-
-                # Resto de lógica igual que opción 1
-                # ...
 
             except FileNotFoundError:
                 print("¡Archivo no encontrado!")
