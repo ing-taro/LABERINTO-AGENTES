@@ -1,103 +1,141 @@
 import random
-import io
 
-
-output = io.StringIO()
-
-
-def crear_laberinto_resoluble(filas=11, columnas=15):
-    if filas % 2 == 0:
-        filas += 1
-    if columnas % 2 == 0:
-        columnas += 1
-
+# --------------------- Generación de laberintos ---------------------
+def generar_laberinto_automatico(filas=10, columnas=10):
     laberinto = [['#' for _ in range(columnas)] for _ in range(filas)]
 
-    laberinto[1][0] = '#E'
-    laberinto[filas - 2][columnas - 2] = 'S'
+    # Posiciones fijas de E y S
+    entrada = (1, 1)
+    salida = (filas-2, columnas-2)
 
-    def generar_camino(x, y):
-        direcciones = [(0, 2), (2, 0), (0, -2), (-2, 0)]
-        random.shuffle(direcciones)
-        for dx, dy in direcciones:
-            nx, ny = x + dx, y + dy
-            if 1 <= nx < filas - 1 and 1 <= ny < columnas - 1 and laberinto[nx][ny] == '#':
-                laberinto[x + dx // 2][y + dy // 2] = ' '
-                laberinto[nx][ny] = ' '
-                generar_camino(nx, ny)
+    # Conectar E al camino horizontal central
+    for j in range(entrada[1], columnas//2 + 1):
+        laberinto[entrada[0]][j] = ' '
 
-    laberinto[1][1] = ' '
-    generar_camino(1, 1)
+    # Conectar S al camino horizontal central
+    for j in range(columnas//2, salida[1] + 1):
+        laberinto[salida[0]][j] = ' '
 
+    # Crear caminos centrales
+    for j in range(1, columnas-1):
+        laberinto[filas//2][j] = ' '
+    for i in range(1, filas-1):
+        laberinto[i][columnas//2] = ' '
 
-    if laberinto[filas - 3][columnas - 2] == '#':
-        laberinto[filas - 3][columnas - 2] = ' '
-    if laberinto[filas - 2][columnas - 3] == '#':
-        laberinto[filas - 2][columnas - 3] = ' '
+    # Colocar E y S
+    laberinto[entrada[0]][entrada[1]] = 'E'
+    laberinto[salida[0]][salida[1]] = 'S'
+
+    # Añadir caminos aleatorios (sin tocar E/S)
+    for _ in range(filas * columnas // 4):
+        i = random.randint(1, filas-2)
+        j = random.randint(1, columnas-2)
+        if (i, j) == entrada or (i, j) == salida:
+            continue
+        laberinto[i][j] = ' '
 
     return laberinto
 
 
-def imprimir_laberinto(laberinto):
+# --------------------- Funciones comunes ---------------------
+def mostrar_laberinto(laberinto):
+    """Muestra el laberinto en consola."""
     for fila in laberinto:
-        print("".join(fila))
-    print()
+        print(''.join(fila))
 
 
+def encontrar_posicion(laberinto, simbolo):
+    """Encuentra la posición de E o S."""
+    for i, fila in enumerate(laberinto):
+        for j, celda in enumerate(fila):
+            if celda == simbolo:
+                return (i, j)
+    return None
+
+
+# --------------------- Menú interactivo ---------------------
+def menu_principal():
+    print("\n--- Menú Laberintos ---")
+    print("1. Generar laberinto automático")
+    print("2. Cargar laberinto desde archivo")
+    print("3. Salir")
+
+    opcion = input("Seleccione una opción: ")
+    return opcion
+
+
+# --------------------- Lógica de agentes (versión simplificada) ---------------------
 def agente_reactivo(laberinto):
+    entrada = encontrar_posicion(laberinto, 'E')
+    salida = encontrar_posicion(laberinto, 'S')
+    pos_actual = entrada
+    movimientos = 0
+    max_iter = 1000
 
-    for i in range(len(laberinto)):
-        for j in range(len(laberinto[i])):
-            if laberinto[i][j] == '#E':
-                agente_fila, agente_columna = i, j
-                break
+    while movimientos < max_iter and pos_actual != salida:
+        # Lógica de movimiento aleatorio (implementación básica)
+        i, j = pos_actual
+        direcciones = []
+        if i > 0 and laberinto[i - 1][j] != '#': direcciones.append((-1, 0))
+        if i < len(laberinto) - 1 and laberinto[i + 1][j] != '#': direcciones.append((1, 0))
+        if j > 0 and laberinto[i][j - 1] != '#': direcciones.append((0, -1))
+        if j < len(laberinto[0]) - 1 and laberinto[i][j + 1] != '#': direcciones.append((0, 1))
 
-
-    direcciones = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-
-    while laberinto[agente_fila][agente_columna] != 'S':
-        # Marcar la casilla actual como visitada
-        if laberinto[agente_fila][agente_columna] != '#E':
-            laberinto[agente_fila][agente_columna] = '·'
-
-
-        movido = False
-        for direccion in direcciones:
-            nueva_fila = agente_fila + direccion[0]
-            nueva_columna = agente_columna + direccion[1]
-
-
-            if 0 <= nueva_fila < len(laberinto) and 0 <= nueva_columna < len(laberinto[0]):
-                if laberinto[nueva_fila][nueva_columna] == ' ' or laberinto[nueva_fila][nueva_columna] == 'S':
-                    agente_fila, agente_columna = nueva_fila, nueva_columna
-                    movido = True
-                    break
-
-
-        if not movido:
-            print("El agente no puede encontrar la salida.")
+        if not direcciones:
             break
 
+        di, dj = random.choice(direcciones)
+        pos_actual = (i + di, j + dj)
+        laberinto[i][j] = '.'  # Marcar visita
+        movimientos += 1
 
-        imprimir_laberinto(laberinto)
-
-    if laberinto[agente_fila][agente_columna] == 'S':
-        print("¡El agente ha encontrado la salida!")
+    return pos_actual == salida, movimientos
 
 
+# --------------------- Flujo principal ---------------------
 if __name__ == "__main__":
-    lab = crear_laberinto_resoluble()
+    salir = False
+    while not salir:
+        opcion = menu_principal()
 
-    def guardar_laberinto(laberinto, archivo = None):
-        for fila in laberinto
-            linea  = " ".join(fila)
-            print(linea)
-            if archivo:
-                print(linea, file=archivo)
+        if opcion == '1':
+            lab = generar_laberinto_automatico()
+            print("\nLaberinto generado:")
+            mostrar_laberinto(lab)
 
-    print("Laberinto inicial:")
-    imprimir_laberinto(lab)
+            # Verificar posiciones
+            entrada_pos = encontrar_posicion(lab, 'E')
+            salida_pos = encontrar_posicion(lab, 'S')
 
-    print("Recorrido del agente:")
-    agente_reactivo(lab)
+            if not entrada_pos or not salida_pos:
+                print("Error: El laberinto no tiene E/S válidas.")
+                continue
+
+            lab_resolver = [fila.copy() for fila in lab]
+            exito, movs = agente_reactivo(lab_resolver)
+
+            print("\nResultado:")
+            mostrar_laberinto(lab_resolver)
+            print(f"\n{'Éxito' if exito else 'Fallo'} en {movs} movimientos")
+
+        elif opcion == '2':
+            # Cargar desde archivo (implementación básica)
+            archivo = input("Nombre del archivo (ej: maze1.txt): ")
+            try:
+                with open(archivo, 'r') as f:
+                    lab = [list(linea.strip()) for linea in f]
+                print("\nLaberinto cargado:")
+                mostrar_laberinto(lab)
+
+                # Resto de lógica igual que opción 1
+                # ...
+
+            except FileNotFoundError:
+                print("¡Archivo no encontrado!")
+
+        elif opcion == '3':
+            salir = True  # Salir del bucle principal
+            print("Saliendo del programa...")
+
+        else:
+            print("Opción no válida")
