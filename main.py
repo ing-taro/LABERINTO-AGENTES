@@ -63,7 +63,11 @@ def menu_principal():
     return opcion
 
 
+<<<<<<< HEAD
 #AGENTE REACTIVO
+=======
+# --------------------- Lógica de agentes ---------------------
+>>>>>>> f5b184780a8befe22123ff040b15e4cc08cb972d
 def agente_reactivo(laberinto):
     entrada = encontrar_posicion(laberinto, 'E')
     salida = encontrar_posicion(laberinto, 'S')
@@ -71,9 +75,14 @@ def agente_reactivo(laberinto):
     movimientos = 0
     max_iter = 1000
 
+<<<<<<< HEAD
     puede_continuar = True
 
     while movimientos < max_iter and pos_actual != salida and puede_continuar:
+=======
+    while movimientos < max_iter and pos_actual != salida:
+        # Lógica de movimiento aleatorio
+>>>>>>> f5b184780a8befe22123ff040b15e4cc08cb972d
         i, j = pos_actual
         direcciones = []
 
@@ -135,16 +144,25 @@ if __name__ == "__main__":
             print(f"\n{'Éxito' if exito else 'Fallo'} en {movs} movimientos")
 
         elif opcion == '2':
+<<<<<<< HEAD
             #cargo el archivo
             archivo = input("Nombre del archivo (opciones: maze1.txt, maze2.txt, maze3.txt): ")
+=======
+            # Cargar desde archivo 
+            archivo = input("Nombre del archivo (ej: maze1.txt): ")
+>>>>>>> f5b184780a8befe22123ff040b15e4cc08cb972d
             try:
                 with open(archivo, 'r') as f:
                     lab = [list(linea.strip()) for linea in f]
                 print("\nLaberinto cargado:")
                 mostrar_laberinto(lab)
 
+<<<<<<< HEAD
 
             except FileNotFoundError: #chatgpt
+=======
+            except FileNotFoundError:
+>>>>>>> f5b184780a8befe22123ff040b15e4cc08cb972d
                 print("¡Archivo no encontrado!")
 
         elif opcion == '3':
