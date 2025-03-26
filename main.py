@@ -1,5 +1,4 @@
 import random
-import copy
 
 
 #declaro los laberintos precargados cmo lista d listas
@@ -191,7 +190,7 @@ def agente_informado(laberinto):
                 else:
                     ya_visitadas.append((cambio_i, cambio_j))
 
-            #actualiza el estado del informado
+
             if no_visitadas:
                 cambio_i, cambio_j = random.choice(no_visitadas)
             elif ya_visitadas:
@@ -223,10 +222,23 @@ if __name__ == "__main__":
         opcion = menu_principal()
 
         if opcion == '1':
-                lab = generar_laberinto()
-                print("\nLaberinto generado:")
+            lab = generar_laberinto()
+            print("\nLaberinto generado:")
+            mostrar_laberinto(lab)
 
-        if opcion == '2':
+            agente = seleccionar_agente()
+            lab_resolver = [fila.copy() for fila in lab]
+
+            if agente == '1':
+                exito, movs = agente_reactivo(lab_resolver)
+            elif agente == '2':
+                exito, movs = agente_informado(lab_resolver)
+
+            print("\nResultado:")
+            mostrar_laberinto(lab_resolver)
+            print(f"\n{'Éxito' if exito else 'Fallo'} en {movs} movimientos")
+
+        elif opcion == '2':
             seleccion = input("Elige laberinto (maze1/maze2/maze3): ").strip().lower()
             if seleccion not in MAZES:
                 print("Laberinto inválido")
